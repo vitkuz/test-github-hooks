@@ -1,7 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const cards = document.querySelectorAll('.feature-card');
-
-    // Smooth scroll for anchor links
+    // Smooth scroll
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
@@ -11,39 +9,32 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Reveal animations on scroll
-    const revealOnScroll = () => {
-        const triggerBottom = window.innerHeight / 5 * 4;
+    // Glitch effect on h1
+    const title = document.querySelector('h1');
+    const originalText = title.innerText;
+    const glitchChars = '!@#$%^&*()_+{}[]|;:,.<>?';
 
-        cards.forEach(card => {
-            const cardTop = card.getBoundingClientRect().top;
+    const glitch = () => {
+        let iterations = 0;
+        const interval = setInterval(() => {
+            title.innerText = originalText.split('').map((char, index) => {
+                if (index < iterations) return originalText[index];
+                return glitchChars[Math.floor(Math.random() * glitchChars.length)];
+            }).join('');
 
-            if(cardTop < triggerBottom) {
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
-            }
-        });
+            if (iterations >= originalText.length) clearInterval(interval);
+            iterations += 1/3;
+        }, 30);
     };
 
-    // Initial styles for cards to animate them
-    cards.forEach(card => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(30px)';
-        card.style.transition = 'all 0.6s ease-out';
-    });
+    title.addEventListener('mouseover', glitch);
+    glitch(); // Initial glitch
 
-    window.addEventListener('scroll', revealOnScroll);
-    revealOnScroll(); // Trigger once on load
-
-    // Header interactive blob movement
-    const blobs = document.querySelectorAll('.blob');
+    // Mouse parallax for grid
+    const grid = document.querySelector('.cyber-grid');
     window.addEventListener('mousemove', (e) => {
-        const x = e.clientX / window.innerWidth;
-        const y = e.clientY / window.innerHeight;
-
-        blobs.forEach((blob, idx) => {
-            const speed = (idx + 1) * 20;
-            blob.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
-        });
+        const x = (e.clientX / window.innerWidth - 0.5) * 20;
+        const y = (e.clientY / window.innerHeight - 0.5) * 20;
+        grid.style.transform = `translate(-50%, -50%) perspective(500px) rotateX(60deg) translate(${x}px, ${y}px)`;
     });
 });
